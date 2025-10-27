@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Reservation Details</title>
+</head>
+<body>
+<div layout:fragment="content" class="admin-dashboard">
+    <div class="container-fluid">
+        <div class="admin-page-header">
+            <h2><i class="fas fa-calendar-check me-2"></i>Reservation Details</h2>
+            <p>View detailed information about this reservation.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Reservation Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Confirmation Number:</strong></label>
+                                    <p class="form-control-plaintext"><code th:text="${reservation.confirmationNumber}"></code></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Status:</strong></label>
+                                    <p>
+                                        <span class="admin-badge"
+                                              th:classappend="${reservation.status.name() == 'CONFIRMED' ? 'bg-success' :
+                                                              reservation.status.name() == 'PENDING' ? 'bg-warning' :
+                                                              reservation.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-secondary'}"
+                                              th:text="${reservation.status.displayName}"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Check-in Date:</strong></label>
+                                    <p class="form-control-plaintext" th:text="${#temporals.format(reservation.checkInDate, 'EEEE, MMMM dd, yyyy')}"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Check-out Date:</strong></label>
+                                    <p class="form-control-plaintext" th:text="${#temporals.format(reservation.checkOutDate, 'EEEE, MMMM dd, yyyy')}"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Number of Guests:</strong></label>
+                                    <p class="form-control-plaintext" th:text="${reservation.numberOfGuests}"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Total Amount:</strong></label>
+                                    <p class="form-control-plaintext" th:text="${#numbers.formatCurrency(reservation.totalAmount)}"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Created At:</strong></label>
+                                    <p class="form-control-plaintext" th:text="${#temporals.format(reservation.createdAt, 'MMM dd, yyyy HH:mm')}"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="admin-form">
+                                    <label class="form-label"><strong>Updated At:</strong></label>
+                                    <p class="form-control-plaintext" th:text="${#temporals.format(reservation.updatedAt, 'MMM dd, yyyy HH:mm')}"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${reservation.specialRequests != null and !reservation.specialRequests.isEmpty()}" class="admin-form">
+                            <label class="form-label"><strong>Special Requests:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.specialRequests}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>Guest Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Name:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.user.firstName + ' ' + reservation.user.lastName}"></p>
+                        </div>
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Email:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.user.email}"></p>
+                        </div>
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Phone:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.user.phoneNumber}"></p>
+                        </div>
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Username:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.user.username}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-bed me-2"></i>Room Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Room Number:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.room.roomNumber}"></p>
+                        </div>
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Room Type:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.room.roomType.displayName}"></p>
+                        </div>
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Price per Night:</strong></label>
+                            <p class="form-control-plaintext" th:text="${#numbers.formatCurrency(reservation.room.pricePerNight)}"></p>
+                        </div>
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Max Occupancy:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.room.maxOccupancy}"></p>
+                        </div>
+                        <div class="admin-form">
+                            <label class="form-label"><strong>Description:</strong></label>
+                            <p class="form-control-plaintext" th:text="${reservation.room.description}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="admin-actions">
+                            <form th:if="${reservation.status.name() == 'PENDING'}"
+                                  th:action="@{/admin/reservations/confirm/{id}(id=${reservation.id})}" method="post">
+                                <button type="submit" class="btn btn-success admin-btn w-100">
+                                    <i class="fas fa-check me-1"></i>Confirm Reservation
+                                </button>
+                            </form>
+                            <form th:if="${reservation.status.name() != 'CANCELLED'}"
+                                  th:action="@{/admin/reservations/cancel/{id}(id=${reservation.id})}" method="post"
+                                  onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                <button type="submit" class="btn btn-danger admin-btn w-100">
+                                    <i class="fas fa-times me-1"></i>Cancel Reservation
+                                </button>
+                            </form>
+                            <a href="/admin/reservations" class="btn btn-secondary admin-btn w-100">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Reservations
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

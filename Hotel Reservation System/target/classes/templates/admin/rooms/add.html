@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Add New Room</title>
+</head>
+<body>
+<div layout:fragment="content" class="admin-dashboard">
+    <div class="container-fluid">
+        <div class="admin-page-header">
+            <h2><i class="fas fa-plus me-2"></i>Add New Room</h2>
+            <p>Create a new room with all necessary details and amenities.</p>
+        </div>
+
+        <div class="admin-form">
+            <form th:action="@{/admin/rooms/add}" th:object="${room}" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="roomNumber" class="form-label">Room Number</label>
+                        <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('roomNumber')}" th:errors="*{roomNumber}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="roomType" class="form-label">Room Type</label>
+                        <select class="form-control" id="roomType" th:field="*{roomType}" required>
+                            <option value="">Select Room Type</option>
+                            <option th:each="type : ${roomTypes}" th:value="${type}" th:text="${type.displayName}"></option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('roomType')}" th:errors="*{roomType}"></div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="pricePerNight" class="form-label">Price Per Night</label>
+                        <input type="number" class="form-control" id="pricePerNight" th:field="*{pricePerNight}" step="0.01" min="0" required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('pricePerNight')}" th:errors="*{pricePerNight}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="maxOccupancy" class="form-label">Max Occupancy</label>
+                        <input type="number" class="form-control" id="maxOccupancy" th:field="*{maxOccupancy}" min="1" required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('maxOccupancy')}" th:errors="*{maxOccupancy}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" th:field="*{description}" rows="3" required></textarea>
+                    <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="imageUrl" class="form-label">Image URL</label>
+                        <input type="url" class="form-control" id="imageUrl" th:field="*{imageUrl}">
+                        <div class="text-danger" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" id="isAvailable" th:field="*{isAvailable}">
+                            <label class="form-check-label" for="isAvailable">
+                                Available for booking
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="mb-3">Amenities</h6>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasWifi" th:field="*{hasWifi}">
+                            <label class="form-check-label" for="hasWifi">Wi-Fi</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasTv" th:field="*{hasTv}">
+                            <label class="form-check-label" for="hasTv">TV</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasAc" th:field="*{hasAc}">
+                            <label class="form-check-label" for="hasAc">Air Conditioning</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasMinibar" th:field="*{hasMinibar}">
+                            <label class="form-check-label" for="hasMinibar">Minibar</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasBalcony" th:field="*{hasBalcony}">
+                            <label class="form-check-label" for="hasBalcony">Balcony</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="/admin/rooms" class="btn btn-secondary admin-btn">Cancel</a>
+                    <button type="submit" class="btn btn-primary admin-btn">Add Room</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

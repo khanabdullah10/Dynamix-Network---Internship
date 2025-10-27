@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+<div layout:fragment="content" class="admin-dashboard">
+    <div class="container-fluid">
+        <div class="admin-page-header">
+            <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+            <p>Welcome to the hotel management system. Monitor your hotel's performance and manage operations.</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="admin-stats-card bg-primary">
+                    <h5><i class="fas fa-bed me-2"></i>Total Rooms</h5>
+                    <h3 th:text="${totalRooms}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="admin-stats-card bg-success">
+                    <h5><i class="fas fa-check-circle me-2"></i>Available Rooms</h5>
+                    <h3 th:text="${availableRooms}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="admin-stats-card bg-info">
+                    <h5><i class="fas fa-calendar-alt me-2"></i>Total Reservations</h5>
+                    <h3 th:text="${totalReservations}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="admin-stats-card bg-warning">
+                    <h5><i class="fas fa-chart-pie me-2"></i>Occupancy Rate</h5>
+                    <h3 th:text="${totalRooms > 0 ? #numbers.formatDecimal((totalRooms - availableRooms) * 100.0 / totalRooms, 1, 1) : 0}">0</h3>%
+                </div>
+            </div>
+        </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="admin-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Reservations</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${recentReservations != null and !recentReservations.empty}">
+                        <div class="admin-table">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Confirmation #</th>
+                                    <th>Guest</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="reservation : ${recentReservations}">
+                                    <td><code th:text="${reservation.confirmationNumber}"></code></td>
+                                    <td th:text="${reservation.user.firstName + ' ' + reservation.user.lastName}"></td>
+                                    <td th:text="${reservation.room.roomNumber}"></td>
+                                    <td th:text="${#temporals.format(reservation.checkInDate, 'MMM dd, yyyy')}"></td>
+                                    <td th:text="${#temporals.format(reservation.checkOutDate, 'MMM dd, yyyy')}"></td>
+                                    <td>
+                                        <span class="admin-badge"
+                                              th:classappend="${reservation.status.name() == 'CONFIRMED' ? 'bg-success' :
+                                                              reservation.status.name() == 'PENDING' ? 'bg-warning' :
+                                                              reservation.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-secondary'}"
+                                              th:text="${reservation.status.displayName}"></span>
+                                    </td>
+                                    <td th:text="${#numbers.formatCurrency(reservation.totalAmount)}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div th:unless="${recentReservations != null and !recentReservations.empty}" class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No recent reservations found.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="admin-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/admin/rooms" class="btn btn-primary admin-btn">
+                            <i class="fas fa-bed me-2"></i>Manage Rooms
+                        </a>
+                        <a href="/admin/reservations" class="btn btn-success admin-btn">
+                            <i class="fas fa-calendar-alt me-2"></i>Manage Reservations
+                        </a>
+                        <a href="/admin/users" class="btn btn-info admin-btn">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </a>
+                        <a href="/admin/reports" class="btn btn-warning admin-btn">
+                            <i class="fas fa-chart-bar me-2"></i>View Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</body>
+</html>

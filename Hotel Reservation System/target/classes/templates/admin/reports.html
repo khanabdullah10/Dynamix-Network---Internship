@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Reports</title>
+</head>
+<body>
+<div layout:fragment="content" class="admin-dashboard">
+    <div class="container-fluid">
+        <div class="admin-page-header">
+            <h2><i class="fas fa-chart-bar me-2"></i>Reports & Analytics</h2>
+            <p>Generate comprehensive reports and analytics for your hotel operations.</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Generate Report</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="get">
+                            <div class="admin-form">
+                                <label for="reportType" class="form-label">Report Type</label>
+                                <select class="form-control" id="reportType" name="reportType" th:value="${selectedReportType}">
+                                    <option value="">Select Report Type</option>
+                                    <option th:each="type : ${reportTypes}" th:value="${type}" th:text="${type}"></option>
+                                </select>
+                            </div>
+
+                            <div th:if="${selectedReportType == 'revenue'}" class="admin-form">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="month" class="form-label">Month</label>
+                                        <select class="form-control" id="month" name="month" th:value="${selectedMonth}">
+                                            <option value="">Select Month</option>
+                                            <option th:each="i : ${#numbers.sequence(1, 12)}" th:value="${i}" th:text="${i}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="year" class="form-label">Year</label>
+                                        <select class="form-control" id="year" name="year" th:value="${selectedYear}">
+                                            <option value="">Select Year</option>
+                                            <option th:each="i : ${#numbers.sequence(2020, 2030)}" th:value="${i}" th:text="${i}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="admin-actions">
+                                <button type="submit" class="btn btn-primary admin-btn">
+                                    <i class="fas fa-chart-line me-1"></i>Generate Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${selectedReportType != null and !selectedReportType.isEmpty()}">
+            <div class="admin-card">
+                <div class="card-header">
+                    <h5 class="mb-0" th:text="${'Report: ' + selectedReportType}"><i class="fas fa-chart-pie me-2"></i>Report</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${selectedReportType == 'occupancy'}">
+                        <h6><i class="fas fa-bed me-2"></i>Current Occupancy</h6>
+                        <p><strong>Date:</strong> <span th:text="${#temporals.format(reportDate, 'MMMM dd, yyyy')}"></span></p>
+                        <p><strong>Occupied Rooms:</strong> <span th:text="${occupancyCount}"></span></p>
+                    </div>
+
+                    <div th:if="${selectedReportType == 'revenue'}">
+                        <h6><i class="fas fa-dollar-sign me-2"></i>Monthly Revenue</h6>
+                        <p><strong>Month:</strong> <span th:text="${reportMonth}"></span></p>
+                        <p><strong>Year:</strong> <span th:text="${reportYear}"></span></p>
+                        <p><strong>Total Revenue:</strong> <span th:text="${#numbers.formatCurrency(revenue)}"></span></p>
+                    </div>
+
+                    <div th:if="${selectedReportType == 'upcoming'}">
+                        <h6><i class="fas fa-calendar-alt me-2"></i>Upcoming Reservations (Next 30 Days)</h6>
+                        <p><strong>Period:</strong> <span th:text="${#temporals.format(startDate, 'MMM dd, yyyy')}"></span> - <span th:text="${#temporals.format(endDate, 'MMM dd, yyyy')}"></span></p>
+                        
+                        <div th:if="${upcomingReservations != null and !upcomingReservations.empty}">
+                            <div class="admin-table">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Confirmation #</th>
+                                        <th>Guest</th>
+                                        <th>Room</th>
+                                        <th>Check-in</th>
+                                        <th>Check-out</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="reservation : ${upcomingReservations}">
+                                        <td><code th:text="${reservation.confirmationNumber}"></code></td>
+                                        <td th:text="${reservation.user.firstName + ' ' + reservation.user.lastName}"></td>
+                                        <td th:text="${reservation.room.roomNumber}"></td>
+                                        <td th:text="${#temporals.format(reservation.checkInDate, 'MMM dd, yyyy')}"></td>
+                                        <td th:text="${#temporals.format(reservation.checkOutDate, 'MMM dd, yyyy')}"></td>
+                                        <td>
+                                            <span class="admin-badge"
+                                                  th:classappend="${reservation.status.name() == 'CONFIRMED' ? 'bg-success' :
+                                                                  reservation.status.name() == 'PENDING' ? 'bg-warning' : 'bg-secondary'}"
+                                                  th:text="${reservation.status.displayName}"></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div th:unless="${upcomingReservations != null and !upcomingReservations.empty}" class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>No upcoming reservations found.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

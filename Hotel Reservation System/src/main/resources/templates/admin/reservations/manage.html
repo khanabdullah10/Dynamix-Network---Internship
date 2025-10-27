@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Manage Reservations</title>
+</head>
+<body>
+<div layout:fragment="content" class="admin-dashboard">
+    <div class="container-fluid">
+        <div class="admin-page-header">
+            <h2><i class="fas fa-calendar-alt me-2"></i>Manage Reservations</h2>
+            <p>View, confirm, and manage all hotel reservations.</p>
+        </div>
+
+        <div class="admin-search-bar">
+            <div class="row">
+                <div class="col-md-6">
+                    <form method="get" class="d-flex">
+                        <input type="text" class="form-control me-2" name="search" placeholder="Search by confirmation number or guest name" th:value="${searchTerm}">
+                        <button type="submit" class="btn btn-primary admin-btn">Search</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <form method="get" class="d-flex">
+                        <select name="status" class="form-control me-2">
+                            <option value="">All Statuses</option>
+                            <option th:each="status : ${statuses}" th:value="${status}" th:text="${status.displayName}"
+                                    th:selected="${status.name() == selectedStatus}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-secondary admin-btn">Filter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${reservations != null and !reservations.empty}">
+            <div class="admin-table">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Confirmation #</th>
+                        <th>Guest</th>
+                        <th>Room</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Guests</th>
+                        <th>Status</th>
+                        <th>Total Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="reservation : ${reservations}">
+                        <td><code th:text="${reservation.confirmationNumber}"></code></td>
+                        <td th:text="${reservation.user.firstName + ' ' + reservation.user.lastName}"></td>
+                        <td th:text="${reservation.room.roomNumber}"></td>
+                        <td th:text="${#temporals.format(reservation.checkInDate, 'MMM dd, yyyy')}"></td>
+                        <td th:text="${#temporals.format(reservation.checkOutDate, 'MMM dd, yyyy')}"></td>
+                        <td th:text="${reservation.numberOfGuests}"></td>
+                        <td>
+                            <span class="admin-badge"
+                                  th:classappend="${reservation.status.name() == 'CONFIRMED' ? 'bg-success' :
+                                                  reservation.status.name() == 'PENDING' ? 'bg-warning' :
+                                                  reservation.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-secondary'}"
+                                  th:text="${reservation.status.displayName}"></span>
+                        </td>
+                        <td th:text="${#numbers.formatCurrency(reservation.totalAmount)}"></td>
+                        <td>
+                            <div class="admin-actions">
+                                <a th:href="@{/admin/reservations/{id}(id=${reservation.id})}" class="btn btn-info btn-sm admin-btn">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form th:if="${reservation.status.name() == 'PENDING'}"
+                                      th:action="@{/admin/reservations/confirm/{id}(id=${reservation.id})}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm admin-btn">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <form th:if="${reservation.status.name() != 'CANCELLED'}"
+                                      th:action="@{/admin/reservations/cancel/{id}(id=${reservation.id})}" method="post" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                    <button type="submit" class="btn btn-danger btn-sm admin-btn">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div th:unless="${reservations != null and !reservations.empty}" class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No reservations found.
+        </div>
+    </div>
+</div>
+</body>
+</html>

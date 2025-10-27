@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${room.roomType.displayName + ' - Room ' + room.roomNumber}">Room Details</title>
+</head>
+<body>
+<div layout:fragment="content" class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/guest/rooms">Rooms</a></li>
+            <li class="breadcrumb-item active" th:text="${room.roomNumber}" aria-current="page"></li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <img th:src="${room.imageUrl != null ? room.imageUrl : 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'}"
+                     class="card-img-top room-detail-img" alt="Room Image">
+                <div class="card-body">
+                    <h1 class="card-title" th:text="${room.roomType.displayName + ' - Room ' + room.roomNumber}"></h1>
+                    <p class="lead text-muted" th:text="${room.description}"></p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="text-primary mb-0">
+                            $<span th:text="${room.pricePerNight}"></span> <small class="text-muted">/ night</small>
+                        </h3>
+                        <span class="badge bg-info fs-6">
+                            <i class="fas fa-users me-1"></i> Max Occupancy: <span th:text="${room.maxOccupancy}"></span>
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <h4 class="mb-3">Amenities</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li th:classappend="${room.hasWifi ? 'text-success' : 'text-muted'}">
+                                    <i th:classappend="${room.hasWifi ? 'fas fa-check-circle' : 'fas fa-times-circle'}" class="me-2"></i>
+                                    Wi-Fi
+                                </li>
+                                <li th:classappend="${room.hasTv ? 'text-success' : 'text-muted'}">
+                                    <i th:classappend="${room.hasTv ? 'fas fa-check-circle' : 'fas fa-times-circle'}" class="me-2"></i>
+                                    TV
+                                </li>
+                                <li th:classappend="${room.hasAc ? 'text-success' : 'text-muted'}">
+                                    <i th:classappend="${room.hasAc ? 'fas fa-check-circle' : 'fas fa-times-circle'}" class="me-2"></i>
+                                    Air Conditioning
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li th:classappend="${room.hasMinibar ? 'text-success' : 'text-muted'}">
+                                    <i th:classappend="${room.hasMinibar ? 'fas fa-check-circle' : 'fas fa-times-circle'}" class="me-2"></i>
+                                    Minibar
+                                </li>
+                                <li th:classappend="${room.hasBalcony ? 'text-success' : 'text-muted'}">
+                                    <i th:classappend="${room.hasBalcony ? 'fas fa-check-circle' : 'fas fa-times-circle'}" class="me-2"></i>
+                                    Balcony
+                                </li>
+                                <li th:classappend="${room.isAvailable ? 'text-success' : 'text-danger'}">
+                                    <i th:classappend="${room.isAvailable ? 'fas fa-check-circle' : 'fas fa-times-circle'}" class="me-2"></i>
+                                    <span th:text="${room.isAvailable ? 'Available' : 'Not Available'}"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/rooms/{id}/book(id=${room.id})}" class="btn btn-primary btn-lg"
+                           th:classappend="${!room.isAvailable ? 'disabled' : ''}">
+                            <i class="fas fa-calendar-alt me-2"></i>Book Now
+                        </a>
+                        <a href="/guest/rooms" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Rooms
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Quick Booking</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Fill out the form below to quickly book this room.</p>
+                    <form th:action="@{/rooms/{id}/book(id=${room.id})}" method="get">
+                        <div class="mb-3">
+                            <label for="checkInDate" class="form-label">Check-in Date</label>
+                            <input type="date" class="form-control" id="checkInDate" name="checkInDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="checkOutDate" class="form-label">Check-out Date</label>
+                            <input type="date" class="form-control" id="checkOutDate" name="checkOutDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numberOfGuests" class="form-label">Number of Guests</label>
+                            <input type="number" class="form-control" id="numberOfGuests" name="numberOfGuests" min="1" th:max="${room.maxOccupancy}" value="1" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-calendar-check me-2"></i>Check Availability & Book
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInDateInput = document.getElementById('checkInDate');
+            const checkOutDateInput = document.getElementById('checkOutDate');
+
+            checkInDateInput.min = today;
+            checkOutDateInput.min = today;
+
+            checkInDateInput.addEventListener('change', function() {
+                const checkInDate = new Date(this.value);
+                checkInDate.setDate(checkInDate.getDate() + 1);
+                checkOutDateInput.min = checkInDate.toISOString().split('T')[0];
+                if (new Date(checkOutDateInput.value) < checkInDate) {
+                    checkOutDateInput.value = checkInDate.toISOString().split('T')[0];
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

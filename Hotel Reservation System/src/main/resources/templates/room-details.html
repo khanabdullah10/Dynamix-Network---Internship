@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${room.roomType.displayName + ' - Room ' + room.roomNumber}">Room Details</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <h1 class="h3 mb-0">
+                <i class="fas fa-bed text-primary me-2"></i>
+                Room Details
+            </h1>
+            <p class="text-muted mb-0">Complete information about this room</p>
+        </div>
+    </section>
+
+    <!-- Room Details -->
+    <section class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0" th:text="${room.roomType.displayName + ' - Room ' + room.roomNumber}">Room 101</h5>
+                        </div>
+                        <div class="card-body">
+                            <img th:src="${room.imageUrl != null ? room.imageUrl : 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'}" 
+                                 class="img-fluid rounded mb-4 room-detail-img" alt="Room Image">
+                            
+                            <h6 class="text-muted mb-3">Description</h6>
+                            <p th:text="${room.description}">Room description here</p>
+                            
+                            <hr>
+                            
+                            <h6 class="text-muted mb-3">Amenities</h6>
+                            <div class="row">
+                                <div class="col-md-6" th:if="${room.hasWifi}">
+                                    <p class="mb-2">
+                                        <i class="fas fa-wifi text-success me-2"></i>Free WiFi
+                                    </p>
+                                </div>
+                                <div class="col-md-6" th:if="${room.hasTv}">
+                                    <p class="mb-2">
+                                        <i class="fas fa-tv text-success me-2"></i>Flat Screen TV
+                                    </p>
+                                </div>
+                                <div class="col-md-6" th:if="${room.hasAc}">
+                                    <p class="mb-2">
+                                        <i class="fas fa-snowflake text-success me-2"></i>Air Conditioning
+                                    </p>
+                                </div>
+                                <div class="col-md-6" th:if="${room.hasMinibar}">
+                                    <p class="mb-2">
+                                        <i class="fas fa-cocktail text-success me-2"></i>Minibar
+                                    </p>
+                                </div>
+                                <div class="col-md-6" th:if="${room.hasBalcony}">
+                                    <p class="mb-2">
+                                        <i class="fas fa-door-open text-success me-2"></i>Balcony
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card sticky-top" style="top: 80px;">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Booking Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h3 class="text-primary" th:text="${#numbers.formatCurrency(room.pricePerNight)}">$120.00</h3>
+                                <small class="text-muted">per night</small>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="mb-3">
+                                <strong>Room Number:</strong><br>
+                                <span th:text="${room.roomNumber}">101</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Room Type:</strong><br>
+                                <span th:text="${room.roomType.displayName}">Single Room</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Max Occupancy:</strong><br>
+                                <i class="fas fa-users text-muted me-1"></i>
+                                <span th:text="${room.maxOccupancy}">1</span> guests
+                            </div>
+                            
+                            <div class="mb-3" th:if="${room.isAvailable}">
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i>Available
+                                </span>
+                            </div>
+                            <div class="mb-3" th:unless="${room.isAvailable}">
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle me-1"></i>Not Available
+                                </span>
+                            </div>
+                            
+                            <sec:authorize="isAuthenticated()">
+                                <a th:href="@{/rooms/{id}/book(id=${room.id})}" 
+                                   class="btn btn-primary w-100" 
+                                   th:if="${room.isAvailable}">
+                                    <i class="fas fa-calendar-check me-2"></i>Book Now
+                                </a>
+                            </sec:authorize>
+                            
+                            <sec:authorize="!isAuthenticated()">
+                                <a th:href="@{/auth/login}" class="btn btn-primary w-100">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login to Book
+                                </a>
+                            </sec:authorize>
+                            
+                            <a href="/rooms" class="btn btn-outline-secondary w-100 mt-2">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Rooms
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
+

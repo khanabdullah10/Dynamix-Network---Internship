@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Guest Rooms</title>
+</head>
+<body>
+<div layout:fragment="content" class="container mt-5">
+    <h2 class="mb-4">Available Rooms</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Search & Filter</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="roomType" class="form-label">Room Type</label>
+                            <select class="form-control" id="roomType" name="roomType" th:value="${selectedRoomType}">
+                                <option value="">All Types</option>
+                                <option th:each="type : ${roomTypes}" th:value="${type}" th:text="${type.displayName}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="checkInDate" class="form-label">Check-in Date</label>
+                            <input type="date" class="form-control" id="checkInDate" name="checkInDate" th:value="${checkInDate}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="checkOutDate" class="form-label">Check-out Date</label>
+                            <input type="date" class="form-control" id="checkOutDate" name="checkOutDate" th:value="${checkOutDate}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${rooms != null and !rooms.empty}">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" th:each="room : ${rooms}">
+                <div class="card room-card h-100">
+                    <div class="position-relative">
+                <img th:src="${room.imageUrl != null ? room.imageUrl : 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'}"
+                     class="card-img-top" alt="Room Image" style="height: 250px; object-fit: cover;">
+                        <div class="room-price">
+                            $<span th:text="${room.pricePerNight}">0</span>/night
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold" th:text="${room.roomType.displayName}">Room Type</h5>
+                        <p class="card-text text-muted" th:text="${room.description}">Room description</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-users me-1"></i>
+                                <span th:text="${room.maxOccupancy}">1</span> guests
+                            </small>
+                            <a th:href="@{/guest/rooms/{id}(id=${room.id})}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:unless="${rooms != null and !rooms.empty}" class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        No rooms found matching your criteria.
+    </div>
+</div>
+</body>
+</html>
