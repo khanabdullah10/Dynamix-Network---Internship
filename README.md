@@ -6,9 +6,9 @@ It showcases end-to-end development skills, including backend, frontend, and dat
 ---
 
 ## 🧩 Tech Stack
-- **Backend:** Spring Boot, Spring MVC, Spring Data JPA  
-- **Frontend:** Thymeleaf / ReactJS, HTML, CSS, JavaScript  
-- **Database:** MySQL  
+- **Backend:** Spring Boot, Spring MVC, Spring Data JPA ,Java Swing, Java FX
+- **Frontend:** Thymeleaf / JSP, HTML, CSS, JavaScript  
+- **Database:** MySQL  /Sql server
 - **Tools:** Maven, Git, Postman, IntelliJ IDEA / VS Code  
 
 ---
@@ -21,6 +21,5 @@ It showcases end-to-end development skills, including backend, frontend, and dat
 - Database connectivity and schema design  
 - Modular and deployment-ready project structure  
 
----
 
-## 📁 Project Structure
+
